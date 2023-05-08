@@ -1,26 +1,42 @@
 import PySimpleGUI as sg
 
-feet_label = sg.Text("Enter feet:")
-feet_input = sg.Input(key="feet")
-
-inches_label = sg.Text("Enter inches:")
-inches_input = sg.Input(key="inches")
-
-convert_button = sg.Button("Convert", key="convert")
-output_label = sg.Text(key="output")
-
-window = sg.Window("Feet and Inches to Meters Converter",
-                   layout=[[feet_label, feet_input],
-                           [inches_label, inches_input],
-                           [convert_button, output_label]])
-
 
 def get_meters(feet=0, inches=0):
     total_inches = feet * 12 + inches
     meters = round(total_inches * 0.0254, 3)
-
     return meters
 
+
+def get_feet_inches(meters=0):
+    total_inches = meters / 0.0254
+    feet = int(total_inches // 12)
+    inches = round(total_inches % 12, 3)
+    return feet, inches
+
+
+# Layout elements
+label_feet = sg.Text("Enter feet:", key="label_feet")
+input_feet = sg.Input(key="input_feet")
+
+label_inches = sg.Text("Enter inches:", key="label_inches")
+input_inches = sg.Input(key="input_inches")
+
+convert_button = sg.Button("Convert", key="convert")
+toggle_button = sg.Button("Toggle", key="toggle")
+conversion_label = sg.Text("Feet & Inches to Meters", key="conversion_mode_label")
+
+output_label = sg.Text(key="output")
+
+layout = [
+    [label_feet, input_feet],
+    [label_inches, input_inches],
+    [convert_button, toggle_button, conversion_label],
+    [output_label]
+]
+
+window = sg.Window("Length Converter", layout)
+
+conversion_mode = "to_meters"
 
 while True:
     event, values = window.read()
@@ -29,17 +45,39 @@ while True:
     if event == sg.WIN_CLOSED:
         break
 
-    feet_str = values["feet"].strip()
-    inches_str = values["inches"].strip()
-
     try:
-        feet = float(feet_str) if feet_str else 0.0
-        inches = float(inches_str) if inches_str else 0.0
+        if event == "convert":
+            value1_str = values["input_feet"].strip()
+            value2_str = values["input_inches"].strip()
+            value1 = float(value1_str) if value1_str else 0.0
+            value2 = float(value2_str) if value2_str else 0.0
 
-        total_meters = get_meters(feet, inches)
+            if conversion_mode == "to_meters":
+                total_meters = get_meters(value1, value2)
+                window["output"].update(value=f"{total_meters} m")
+            else:
+                meters = value1 + value2 / 100
+                feet, inches = get_feet_inches(meters)
+                window["output"].update(value=f"{feet} ft {inches} in")
 
-        window["output"].update(value=f"{total_meters} m")
+        elif event == "toggle":
+            if conversion_mode == "to_meters":
+                window["conversion_mode_label"].update("Meters to Feet & Inches")
+                conversion_mode = "to_feet_inches"
+                window["input_feet"].update(value="")
+                window["input_inches"].update(value="")
+                window["output"].update(value="")
+                window["label_feet"].Update("Enter meters:")
+                window["label_inches"].Update("Enter centimeters:")
+            else:
+                window["conversion_mode_label"].update("Feet & Inches to Meters")
+                conversion_mode = "to_meters"
+                window["input_feet"].update(value="")
+                window["input_inches"].update(value="")
+                window["output"].update(value="")
+                window["label_feet"].Update("Enter feet:")
+                window["label_inches"].Update("Enter inches:")
     except ValueError:
-        window["output"].update(value="Invalid input. Please enter numbers for feet and inches.")
+        window["output"].update(value="Invalid input. Please enter numbers for values.")
 
 window.close()
