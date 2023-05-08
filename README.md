@@ -30,5 +30,5 @@ A simple Python application using PySimpleGUI to convert feet and inches to mete
 4. The converted value will be displayed next to the "Convert" button.
 
 ## Screenshot
-![image](https://user-images.githubusercontent.com/92830530/236691691-f18b8d57-ad06-4e27-9390-5bb99b9fb9ce.png)
+![image](https://user-images.githubusercontent.com/92830530/236853353-aea2beb8-9e8a-4b7a-a178-68b8da1f9bd5.png)
 
