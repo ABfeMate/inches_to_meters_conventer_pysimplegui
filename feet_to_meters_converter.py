@@ -1,5 +1,8 @@
 import PySimpleGUI as sg
 
+# Setting the theme for PySimpleGUI
+sg.theme("Black")
+
 
 def get_meters(feet=0, inches=0):
     total_inches = feet * 12 + inches
@@ -25,13 +28,14 @@ convert_button = sg.Button("Convert", key="convert")
 toggle_button = sg.Button("Toggle", key="toggle")
 conversion_label = sg.Text("Feet & Inches to Meters", key="conversion_mode_label")
 
-output_label = sg.Text(key="output")
+exit_button = sg.Button("Exit", key="exit")
+output_label = sg.Text(key="output", size=(60, 1))
 
 layout = [
     [label_feet, input_feet],
     [label_inches, input_inches],
     [convert_button, toggle_button, conversion_label],
-    [output_label]
+    [output_label, exit_button]
 ]
 
 window = sg.Window("Length Converter", layout)
@@ -42,7 +46,7 @@ while True:
     event, values = window.read()
     print(event, values)
 
-    if event == sg.WIN_CLOSED:
+    if event == sg.WIN_CLOSED or event == "exit":
         break
 
     try:
